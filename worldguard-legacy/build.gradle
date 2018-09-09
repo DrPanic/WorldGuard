@@ -9,9 +9,23 @@ targetCompatibility = 1.8
 
 checkstyle.configFile = new File(projectDir, "config/checkstyle/checkstyle.xml")
 
+
+repositories {
+    maven {
+        url 'http://terraconia.de:8081/artifactory/terraconia-repos'
+        name = "maven-main-cache"
+        credentials {
+            username = tcUser
+            password = tcPassword
+        }
+    }
+}
+
 dependencies {
     compile 'org.khelekore:prtree:1.5.0'
     compile 'org.bukkit:bukkit:1.12-R0.1-SNAPSHOT'
+    compile group: 'de.terraconia', name: 'PlayerAPI-Bukkit', version: 'SERVER-SNAPSHOT', changing: true, transitive: false
+    compile group: 'de.terraconia', name: 'Baba43Lib-Bukkit', version: 'SERVER-SNAPSHOT', changing: true, transitive: false
     compile 'com.sk89q.worldedit:worldedit-bukkit:6.1.3-SNAPSHOT'
     compile 'com.sk89q:squirrelid:0.1.0'
     compile 'org.flywaydb:flyway-core:3.0'

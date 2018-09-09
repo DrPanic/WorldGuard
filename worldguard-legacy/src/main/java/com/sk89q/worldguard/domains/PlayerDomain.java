@@ -82,6 +82,12 @@ public class PlayerDomain implements Domain, ChangeTracked {
             // Trim because some names contain spaces (previously valid Minecraft
             // names) and we cannot store these correctly in the SQL storage
             // implementations
+            if (Bukkit.getServer() != null) { // ByPassing Unit Tests
+                final PlayerInfo player = PlayerAPIPlugin.getApi().getPlayerByName(name.trim());
+                if (player != null) {
+                    uniqueIds.add(player.getUuid());
+                }
+            }
         }
     }
 
@@ -94,6 +100,12 @@ public class PlayerDomain implements Domain, ChangeTracked {
         checkNotNull(uniqueId);
         setDirty(true);
         uniqueIds.add(uniqueId);
+        if (Bukkit.getServer() != null) { // ByPassing Unit Tests
+            final PlayerInfo player = PlayerAPIPlugin.getApi().getPlayerByUuid(uniqueId);
+            if (player != null) {
+                names.add(player.getName().toLowerCase());
+            }
+        }
     }
 
     /**
@@ -116,6 +128,12 @@ public class PlayerDomain implements Domain, ChangeTracked {
         checkNotNull(name);
         setDirty(true);
         names.remove(name.trim().toLowerCase());
+        if (Bukkit.getServer() != null) { // ByPassing Unit Tests
+            final PlayerInfo player = PlayerAPIPlugin.getApi().getPlayerByName(name);
+            if (player != null) {
+                uniqueIds.remove(player.getUuid());
+            }
+        }
     }
 
     /**
@@ -127,6 +145,12 @@ public class PlayerDomain implements Domain, ChangeTracked {
         checkNotNull(uuid);
         setDirty(true);
         uniqueIds.remove(uuid);
+        if (Bukkit.getServer() != null) { // ByPassing Unit Tests
+            final PlayerInfo player = PlayerAPIPlugin.getApi().getPlayerByUuid(uuid);
+            if (player != null) {
+                names.remove(player.getName());
+            }
+        }
     }
 
     /**
@@ -145,7 +169,7 @@ public class PlayerDomain implements Domain, ChangeTracked {
     @Override
     public boolean contains(LocalPlayer player) {
         checkNotNull(player);
-        return contains(player.getName().trim().toLowerCase()) || contains(player.getUniqueId());
+        return contains(player.getName()) || contains(player.getUniqueId());
     }
 
     /**
@@ -180,7 +204,7 @@ public class PlayerDomain implements Domain, ChangeTracked {
 
     @Override
     public int size() {
-        return names.size() + uniqueIds.size();
+        return Math.max(names.size(), uniqueIds.size());
     }
 
     @Override
